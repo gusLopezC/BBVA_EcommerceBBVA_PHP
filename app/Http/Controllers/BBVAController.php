@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 require(dirname(__FILE__) . '/BBVA-PHP/Bbva.php');
 use Illuminate\Support\Facades\Log;
 use Bbva;
+use Redirect;
+
 
 class BBVAController extends Controller
 {
@@ -15,25 +17,25 @@ class BBVAController extends Controller
     public function store(){
 
 
-        $bbva = Bbva::getInstance('moiep6umtcnanql3jrxp', 'sk_3433941e467c4875b178ce26348b0fac');
+        $bbva = Bbva::getInstance('mfjdlip7ehwej8y0g7rv', 'sk_528cb60580bf4aa89c97ee9fdc7e7e07');
 
-        $tokenData = array(
-            'holder_name' => 'Luis Pérez',
-            'card_number' => '4111111111111111',
-            'cvv2' => '123',
-            'expiration_month' => '12',
-            'expiration_year' => '23',
-            'address' => array(
-                'line1' => 'Av. 5 de Febrero No. 1',
-                'line2' => 'Col. Felipe Carrillo Puerto',
-                'line3' => 'Zona industrial Carrillo Puerto',
-                'postal_code' => '76920',
-                'state' => 'Querétaro',
-                'city' => 'Querétaro',
-                'country_code' => 'MX'));
+        $chargeRequest = array(
+            'affiliation_bbva' => '275678',
+            'amount' => 100,
+            'description' => 'Cargo inicial a mi merchant',
+            'currency' => 'MXN',
+            'redirect_url' => 'https://www.promodescuentos.com/hot',
+            'customer' => array(
+                'name' => 'Juan',
+                'last_name' => 'Vazquez Juarez',
+                'email' => 'juan.vazquez@empresa.com.mx',
+                'phone_number' => '554-170-3567')
+        );
         
-        $token = $bbva->tokens->add($tokenData);
+        $charge = $bbva->charges->create($chargeRequest);
 
-        return $token->id;
+        //return $charge->payment_method->url;
+
+        return Redirect::to($charge->payment_method->url);
     }
 }
